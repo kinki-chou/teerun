@@ -141,3 +141,5 @@ tags
 *.user
 *.vcxproj
 *.zip
+
+autoexec_server.cfg

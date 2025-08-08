@@ -38,7 +38,7 @@ bool str_contains_ip(const char *pStr)
 				// dbg_msg("str_contains_ip", "break in byte %d at i=%d because got dot", byte, i);
 				break;
 			}
-			if(!isdigit(s[0]))
+			if(!isdigit((unsigned char)s[0]))
 			{
 				if(i > 0)
 				{

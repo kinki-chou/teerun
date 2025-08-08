@@ -2807,6 +2807,8 @@ if(SERVER)
     gamemodes/instagib/zcatch/zcatch.h
     gamemodes/mod.cpp
     gamemodes/mod.h
+    gamemodes/TeeRun/TeeRun.cpp
+    gamemodes/TeeRun/TeeRun.h
     gamemodes/vanilla/base_vanilla.cpp
     gamemodes/vanilla/base_vanilla.h
     gamemodes/vanilla/ctf/ctf.cpp

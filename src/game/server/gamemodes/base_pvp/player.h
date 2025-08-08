@@ -96,7 +96,7 @@ public:
 	// will be used like m_RespawnDisabled in 0.7
 	bool m_IsDead = false;
 	bool m_GotRespawnInfo = false;
-	bool m_WantsToJoinSpectators = false;
+	bool m_WantsToJoinSpectators = false; // i stole it into TeeRun xDDDDDDDDD
 	std::vector<int> m_vVictimIds;
 
 	// kills made in zCatch that give reward points
@@ -105,6 +105,13 @@ public:
 	// it includes players that left the game so it might be more than m_vVictimIds.size()
 	// and it does not include players that were released so it is more than m_Spree
 	int m_KillsThatCount = 0;
+
+	/*******************************************************************
+	 * TeeRun                                                          *
+	 *******************************************************************/
+
+	int m_DeadSpec; // dead = 1, alive = 0, spec = -1
+	bool m_WantsToJoinGame;
 
 	/*******************************************************************
 	 * gCTF                                                            *

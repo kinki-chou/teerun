@@ -194,6 +194,7 @@ void CGameControllerPvp::RoundInitPlayer(CPlayer *pPlayer)
 {
 	pPlayer->m_IsDead = false;
 	pPlayer->m_KillerId = -1;
+	pPlayer->m_DeadSpec = 0;
 }
 
 // this is only called once on connect
