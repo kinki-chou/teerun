@@ -77,6 +77,7 @@ void CGameControllerTeeRun::OnRoundStart()
 void CGameControllerTeeRun::OnRoundEnd()
 {
 	m_IsRoundEnding = true;
+	m_RoundEndTick = Server()->Tick();
 	EndRound();
 	CGameControllerVanilla::OnRoundEnd();
 	m_IsRoundStart = false;
@@ -87,15 +88,15 @@ void CGameControllerTeeRun::OnRoundEnd()
 	m_CurrentTarget = -1;
 	m_RoundPassed = 0;
 	m_BroadcastPvp = false;
-	// for(int i = 0; i < MAX_CLIENTS; i++)
-	// {
-	// 	CPlayer *pPlayer = GameServer()->m_apPlayers[i];
-	// 	if(!pPlayer)
-	// 		continue;
-	// 	pPlayer->m_DeadSpec = 0;
-	// 	pPlayer->m_IsDead = 0;
-	// 	pPlayer->SetTeamNoKill(TEAM_RED);
-	// }
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		CPlayer *pPlayer = GameServer()->m_apPlayers[i];
+		if(!pPlayer)
+			continue;
+		pPlayer->m_DeadSpec = 0;
+		pPlayer->m_IsDead = 0;
+		pPlayer->SetTeamNoKill(TEAM_RED);
+	}
 }
 
 void CGameControllerTeeRun::OnPlayerConnect(CPlayer *pPlayer)
@@ -138,8 +139,8 @@ int CGameControllerTeeRun::OnCharacterDeath(class CCharacter *pVictim, class CPl
 bool CGameControllerTeeRun::CanJoinTeam(int Team, int NotThisId, char *pErrorReason, int ErrorReasonSize)
 {
 	CPlayer *pPlayer = GameServer()->m_apPlayers[NotThisId];
-	if(pPlayer && !m_IsRoundStart)
-		return true;
+	if(pPlayer && Team == TEAM_RED)
+		return true; // bro waht
 	if(pPlayer && pPlayer->m_IsDead && Team != TEAM_SPECTATORS && m_IsRoundStart)
 	{
 		str_format(pErrorReason, ErrorReasonSize, "Wait until this round is over");
@@ -222,12 +223,6 @@ void CGameControllerTeeRun::Tick()
 		if(!pPlayer)
 			continue;
 
-		// a piece of shit
-		if(m_IsRoundStart && pPlayer->GetTeam() == TEAM_SPECTATORS)
-		{
-			pPlayer->m_IsDead = 1;
-		}
-
 		if(!pPlayer->m_IsDead)
 		{
 			if(Server()->ClientName(i) == "(connecting)" || Server()->ClientName(i) == "(invalid)")
@@ -235,13 +230,38 @@ void CGameControllerTeeRun::Tick()
 			m_AlivePlayers++;
 			m_LastAlivePlayer = Server()->ClientName(i);
 		}
+
+		// a piece of shit
+		if(m_IsRoundStart)
+		{
+			if(pPlayer->GetTeam() == TEAM_SPECTATORS)
+			{
+				pPlayer->m_IsDead = 1;
+			}
+			if(pPlayer->m_IsDead && pPlayer->GetTeam() != TEAM_SPECTATORS)
+			{
+				pPlayer->SetTeamNoKill(TEAM_SPECTATORS);
+			}
+		}
 		else
 		{
-			pPlayer->SetTeamNoKill(TEAM_SPECTATORS);
+			if(pPlayer->GetTeam() == TEAM_RED)
+			{
+				pPlayer->m_IsDead = 0;
+			}
+			if(!pPlayer->m_IsDead && pPlayer->GetTeam() != TEAM_RED)
+			{
+				pPlayer->SetTeamNoKill(TEAM_RED);
+			}
+			// pPlayer->m_IsDead = 0;
+			// pPlayer->SetTeamNoKill(TEAM_RED);
 		}
 	}
 
 	// str_format(aBuf, sizeof(aBuf), "Currently there are %d players! ", m_AlivePlayers);
+	// dbg_msg("TeeRun", aBuf);
+
+	// str_format(aBuf, sizeof(aBuf), "Round start: %d", m_IsRoundStart);
 	// dbg_msg("TeeRun", aBuf);
 
 	// if the game can start ...
@@ -307,7 +327,10 @@ void CGameControllerTeeRun::Tick()
 					m_TargetTick = Server()->Tick();
 					m_BroadcastTarget = true;
 				}
-				pTarget->m_Score = g_Config.m_SvTeeRunTargetEscapeTime - (Server()->Tick() - m_TargetTick) / SERVER_TICK_SPEED;
+				if(pTarget)
+				{
+					pTarget->m_Score = g_Config.m_SvTeeRunTargetEscapeTime - (Server()->Tick() - m_TargetTick) / SERVER_TICK_SPEED;
+				}
 
 				// if target escaped
 				if(Server()->Tick() - m_TargetTick > SERVER_TICK_SPEED * g_Config.m_SvTeeRunTargetEscapeTime)
@@ -371,10 +394,16 @@ void CGameControllerTeeRun::Tick()
 				}
 			}
 		}
+		else if(m_IsRoundEnding)
+		{
+			if(Server()->Tick() - m_RoundEndTick >= SERVER_TICK_SPEED * 10)
+			{
+				m_IsRoundEnding = false;
+			}
+		}
 		else
 		{
 			m_IsRoundStart = true;
-			m_IsRoundEnding = false;
 			StartTeeRun();
 		}
 	}
@@ -393,8 +422,11 @@ void CGameControllerTeeRun::Tick()
 			GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 			OnRoundEnd();
 		}
-		m_IsRoundStart = false; //???
-		// else: wait for players
+		// m_IsRoundStart = false; //???
+		else
+		{
+			GameServer()->SendBroadcast("Waiting for players", -1);
+		}
 	}
 	else if(!m_AlivePlayers)
 	{
@@ -403,6 +435,7 @@ void CGameControllerTeeRun::Tick()
 			GameServer()->SendChat(-1, TEAM_ALL, "No one wins...");
 			OnRoundEnd();
 		}
+		GameServer()->SendBroadcast("Waiting for players", -1);
 		m_IsRoundStart = false; //???
 	}
 	else

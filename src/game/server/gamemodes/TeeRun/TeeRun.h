@@ -13,6 +13,7 @@ public:
 
 	bool m_IsRoundStart = false;
 	bool m_IsRoundEnding = false;
+	int m_RoundEndTick;
 
 	bool m_IsSolomode = false;
 	bool m_IsTargetmode = false;
