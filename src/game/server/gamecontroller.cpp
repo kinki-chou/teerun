@@ -832,6 +832,8 @@ void IGameController::Snap(int SnappingClient)
 			// not effected
 			break;
 		}
+
+		// teerun
 	}
 
 	GameServer()->SnapSwitchers(SnappingClient);

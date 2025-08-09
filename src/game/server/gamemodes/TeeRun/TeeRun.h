@@ -41,6 +41,7 @@ public:
 	void OnRoundStart() override;
 	void OnRoundEnd() override;
 
+	virtual void Snap(int SnappingClient);
 	virtual void StartTeeRun();
 };
 #endif // GAME_SERVER_GAMEMODES_TEERUN_TEERUN_H
