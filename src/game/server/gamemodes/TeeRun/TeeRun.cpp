@@ -22,6 +22,8 @@ CGameControllerTeeRun::CGameControllerTeeRun(class CGameContext *pGameServer) :
 
 	m_DefaultWeapon = WEAPON_HAMMER;
 
+	m_AllowSkinColorChange = false; // Thank you zCatch!
+
 	// m_GameFlags = GAMEFLAG_TEAMS; // GAMEFLAG_TEAMS makes it a two-team gamemode
 }
 
@@ -42,7 +44,6 @@ CGameControllerTeeRun::~CGameControllerTeeRun() = default;
 void CGameControllerTeeRun::OnRoundStart()
 {
 	CGameControllerVanilla::OnRoundStart();
-
 }
 
 void CGameControllerTeeRun::OnRoundEnd()
@@ -67,6 +68,7 @@ void CGameControllerTeeRun::OnRoundEnd()
 		pPlayer->m_DeadSpec = 0;
 		pPlayer->m_IsDead = 0;
 		pPlayer->SetTeamNoKill(TEAM_RED);
+		pPlayer->m_TeeInfos.m_UseCustomColor = 0;
 	}
 }
 
@@ -138,6 +140,7 @@ void CGameControllerTeeRun::StartTeeRun()
 		pPlayer->m_IsDead = 0;
 		pPlayer->SetTeamNoKill(TEAM_RED);
 		m_vTargetList.push_back(i); // for Target mode
+		pPlayer->m_TeeInfos.m_UseCustomColor = 0;
 	}
 
 	// Solo mode
@@ -294,6 +297,27 @@ void CGameControllerTeeRun::Tick()
 					str_format(aBuf, sizeof(aBuf), "Next target: cid=%d", m_CurrentTarget);
 					dbg_msg("TeeRun", aBuf);
 
+					// set players' color
+					for(int i = 0; i < MAX_CLIENTS; i++)
+					{
+						CPlayer *pPlayer = GameServer()->m_apPlayers[i];
+						if(!pPlayer)
+							continue;
+						if(i == m_CurrentTarget)
+						{
+							// blue
+							pPlayer->m_TeeInfos.m_ColorBody = 0xAAFF66;
+							pPlayer->m_TeeInfos.m_ColorFeet = 0xAAFF99;
+						}
+						else
+						{
+							// red
+							pPlayer->m_TeeInfos.m_ColorBody = 0x00FF55;
+							pPlayer->m_TeeInfos.m_ColorFeet = 0x00FF44;
+						}
+						pPlayer->m_TeeInfos.m_UseCustomColor = 1;
+					}
+
 					m_TargetTick = Server()->Tick();
 					m_BroadcastTarget = true;
 				}
@@ -360,6 +384,15 @@ void CGameControllerTeeRun::Tick()
 					str_format(aBuf, sizeof(aBuf), "%d 轮已过去, 决出最终的胜者吧!\nPVP死斗模式已开启.", g_Config.m_SvTeeRunEnablePvpAfterRound);
 					GameServer()->SendBroadcast(aBuf, -1);
 					GameServer()->SendChat(-1, TEAM_ALL, aBuf);
+
+					for(int i = 0; i < MAX_CLIENTS; i++)
+					{
+						CPlayer *pPlayer = GameServer()->m_apPlayers[i];
+						if(!pPlayer)
+							continue;
+						pPlayer->m_TeeInfos.m_UseCustomColor = 0;
+					}
+
 					m_BroadcastPvp = true;
 				}
 			}
@@ -401,10 +434,15 @@ void CGameControllerTeeRun::Tick()
 			OnRoundEnd();
 		}
 		GameServer()->SendBroadcast("Waiting for players", -1);
-		m_IsRoundStart = false; //???
+		// m_IsRoundStart = false; //???
 	}
 	else
 	{
 		dbg_msg("TeeRun", "ERROR: m_AlivePlayers < 0");
 	}
+}
+
+void CGameControllerTeeRun::Snap(int SnappingClient)
+{
+	IGameController::Snap(SnappingClient);
 }
