@@ -773,11 +773,11 @@ MACRO_CONFIG_INT(ClVideoRecorderFPS, cl_video_recorder_fps, 60, 1, 1000, CFGFLAG
 #include "variables_insta.h"
 
 // teerun
-// MACRO_CONFIG_INT(SvTeeRunSolomodeTime, sv_teerun_solomode_time, 20, 0, 180, CFGFLAG_SERVER, "开局跑路时间")
-MACRO_CONFIG_INT(SvTeeRunSolomodeTime, sv_teerun_solomode_time, 5, 0, 180, CFGFLAG_SERVER, "开局跑路时间") // debug
-// MACRO_CONFIG_INT(SvTeeRunTargetEscapeTime, sv_teerun_target_escape_time, 30, 0, 300, CFGFLAG_SERVER, "目标需要撑过的时间")
-MACRO_CONFIG_INT(SvTeeRunTargetEscapeTime, sv_teerun_target_escape_time, 10, 0, 300, CFGFLAG_SERVER, "目标需要撑过的时间") // debug
-// MACRO_CONFIG_INT(SvTeeRunEnablePvpAfterRound, sv_teerun_enable_pvp_after_round, 3, 0, 10, CFGFLAG_SERVER, "多少轮后开启PVP模式")
-MACRO_CONFIG_INT(SvTeeRunEnablePvpAfterRound, sv_teerun_enable_pvp_after_round, 2, 0, 10, CFGFLAG_SERVER, "多少轮后开启PVP模式") // debug
-// MACRO_CONFIG_INT(SvTeeRunSelfDamage, sv_teerun_self_damage, 0, 0, 1, CFGFLAG_SERVER, "是否允许自身伤害")
-MACRO_CONFIG_INT(SvTeeRunSelfDamage, sv_teerun_self_damage, 0, 0, 1, CFGFLAG_SERVER, "是否允许自身伤害") // debug
+MACRO_CONFIG_INT(SvTeeRunSolomodeTime, sv_teerun_solomode_time, 20, 0, 180, CFGFLAG_SERVER, "开局跑路时间")
+// MACRO_CONFIG_INT(SvTeeRunSolomodeTime, sv_teerun_solomode_time, 5, 0, 180, CFGFLAG_SERVER, "开局跑路时间") // debug
+MACRO_CONFIG_INT(SvTeeRunTargetEscapeTime, sv_teerun_target_escape_time, 30, 0, 300, CFGFLAG_SERVER, "目标需要撑过的时间")
+// MACRO_CONFIG_INT(SvTeeRunTargetEscapeTime, sv_teerun_target_escape_time, 10, 0, 300, CFGFLAG_SERVER, "目标需要撑过的时间") // debug
+MACRO_CONFIG_INT(SvTeeRunEnablePvpAfterRound, sv_teerun_enable_pvp_after_round, 3, 0, 10, CFGFLAG_SERVER, "多少轮后开启PVP模式")
+// MACRO_CONFIG_INT(SvTeeRunEnablePvpAfterRound, sv_teerun_enable_pvp_after_round, 2, 0, 10, CFGFLAG_SERVER, "多少轮后开启PVP模式") // debug
+MACRO_CONFIG_INT(SvTeeRunSelfDamage, sv_teerun_self_damage, 0, 0, 1, CFGFLAG_SERVER, "是否允许自残")
+// MACRO_CONFIG_INT(SvTeeRunSelfDamage, sv_teerun_self_damage, 0, 0, 1, CFGFLAG_SERVER, "是否允许自残") // debug
