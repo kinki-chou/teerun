@@ -43,35 +43,6 @@ void CGameControllerTeeRun::OnRoundStart()
 {
 	CGameControllerVanilla::OnRoundStart();
 
-	// char aBuf[255];
-	// int m_AlivePlayers = 0;
-
-	// for(int i = 0; i < MAX_CLIENTS; i++)
-	// {
-	// 	CPlayer *pPlayer = GameServer()->m_apPlayers[i];
-	// 	if(!pPlayer)
-	// 		continue;
-	// 	if(pPlayer->GetTeam() != TEAM_SPECTATORS)
-	// 		m_AlivePlayers++;
-
-	// 	// if(pPlayer->m_WantsToJoinSpectators)
-	// 	// 	pPlayer->m_DeadSpec = -1;
-	// 	// if(pPlayer->m_WantsToJoinGame || pPlayer->m_DeadSpec == 1)
-	// 	// 	pPlayer->m_DeadSpec = 0;
-	// 	// m_vTargetList.push_back(i);
-	// }
-
-	// std::mt19937 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-	// std::shuffle(m_vTargetList.begin(), m_vTargetList.end(), rng);
-
-	// std::string str = "m_vTargetList: ";
-	// for(int i = 0; i < m_vTargetList.size(); i++)
-	// {
-	// 	str.append(m_vTargetList[i] + "0");
-	// 	str.append(",");
-	// }
-	// str_format(aBuf, sizeof(aBuf), str.c_str());
-	// dbg_msg("TeeRun", aBuf);
 }
 
 void CGameControllerTeeRun::OnRoundEnd()
@@ -216,7 +187,6 @@ void CGameControllerTeeRun::Tick()
 
 	int m_AlivePlayers = 0;
 	std::string m_LastAlivePlayer;
-	std::string temp;
 	for(int i = 0; i < MAX_CLIENTS; i++)
 	{
 		CPlayer *pPlayer = GameServer()->m_apPlayers[i];
@@ -412,13 +382,8 @@ void CGameControllerTeeRun::Tick()
 	{
 		if(m_IsRoundStart)
 		{
-			// temp = "The winner is '";
-			// temp.append(m_LastAlivePlayer);
-			// temp.append("'!");
-			temp = "'";
-			temp.append(m_LastAlivePlayer);
-			temp.append("'赢了!");
-			str_format(aBuf, sizeof(aBuf), temp.c_str());
+			// str_format(aBuf, sizeof(aBuf), "The winner is '%s'!", m_LastAlivePlayer.c_str());
+			str_format(aBuf, sizeof(aBuf), "'%s'赢了!", m_LastAlivePlayer.c_str());
 			GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 			OnRoundEnd();
 		}
