@@ -423,7 +423,8 @@ void CGameControllerTeeRun::Tick()
 		// m_IsRoundStart = false; //???
 		else
 		{
-			GameServer()->SendBroadcast("Waiting for players", -1);
+			if(!(Server()->Tick() % (SERVER_TICK_SPEED * 2)))
+				GameServer()->SendBroadcast("Waiting for players", -1);
 		}
 	}
 	else if(!m_AlivePlayers)
@@ -433,12 +434,12 @@ void CGameControllerTeeRun::Tick()
 			GameServer()->SendChat(-1, TEAM_ALL, "No one wins...");
 			OnRoundEnd();
 		}
-		GameServer()->SendBroadcast("Waiting for players", -1);
 		// m_IsRoundStart = false; //???
 	}
 	else
 	{
-		dbg_msg("TeeRun", "ERROR: m_AlivePlayers < 0");
+		if(!(Server()->Tick() % (SERVER_TICK_SPEED * 2)))
+			dbg_msg("TeeRun", "ERROR: m_AlivePlayers < 0");
 	}
 }
 
